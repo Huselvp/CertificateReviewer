@@ -1,17 +1,39 @@
-// Import express
-const express = require('express');
+const express = require("express");
+const path = require("path");
 
-// Initialize the app
 const app = express();
 
-// Define the checkHealth route
-app.get('/checkHealth', (req, res) => {
-    res.status(200).json({ status: 'Healthy', message: 'Service is up and running' });
+app.get("/file/:id", (req, res) => {
+  const docId = req.params.id;
+
+  const mockedDocData = [
+    { id: 1, path: "Image.png" },
+    { id: 2, path: "Image1.png" },
+    { id: 3, path: "hind-aarab.txt" },
+    { id: 4, path: "houda-mesbahi.txt" },
+    { id: 5, path: "youssef-zaz.txt" },
+  ];
+
+  // Find the document by id
+  const user = mockedDocData.filter((f) => f.id == docId);
+
+  // Check if the document exists
+  if (user.length === 0) {
+    return res.status(404).send({ error: "File not found" });
+  }
+
+  // Get the file path and serve the file
+  const filePath = path.join(__dirname, "dom", user[0].path); // Adjust the folder name 'dom'
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      res.status(500).send({ error: "File could not be served" });
+    }
+  });
 });
 
-// Start the server on port 3000
-const PORT = process.env.PORT || 3000;
+// Start the server
+const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-
